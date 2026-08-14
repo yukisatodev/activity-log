@@ -6,6 +6,7 @@ import os
 from datetime import datetime, timezone, timedelta
 
 from contributions import fetch_contributions
+from stats import current_streak
 
 GITHUB_USERNAME = os.environ.get("GITHUB_USERNAME", "yukisatodev")
 JST = timezone(timedelta(hours=9))
@@ -27,15 +28,17 @@ def save_data(data):
 
 
 def main():
-    today = datetime.now(JST).date().isoformat()
+    today = datetime.now(JST).date()
     calendar = fetch_contributions(GITHUB_USERNAME)
-    count = calendar.get(today, 0)
+    count = calendar.get(today.isoformat(), 0)
 
     data = load_data()
-    data[today] = count
+    data[today.isoformat()] = count
     save_data(data)
 
-    print(f"{today}: {count} contribution(s) logged for {GITHUB_USERNAME}")
+    streak = current_streak(data, today)
+    print(f"{today.isoformat()}: {count} contribution(s) logged for {GITHUB_USERNAME} "
+          f"(current streak: {streak} day{'s' if streak != 1 else ''})")
 
 
 if __name__ == "__main__":
