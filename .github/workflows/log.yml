@@ -1,0 +1,32 @@
+name: Log daily activity
+
+on:
+  schedule:
+    - cron: "50 14 * * *" # 23:50 JST
+  workflow_dispatch: {}
+
+permissions:
+  contents: write
+
+jobs:
+  log:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Run logger
+        run: python logger.py
+        env:
+          GITHUB_USERNAME: yukisatodev
+
+      - name: Commit and push if changed
+        run: |
+          git config user.name "activity-log-bot"
+          git config user.email "actions@users.noreply.github.com"
+          git add data/activity.json
+          git diff --staged --quiet || git commit -m "Log activity for $(date -u -d '+9 hours' +%Y-%m-%d)"
+          git push
