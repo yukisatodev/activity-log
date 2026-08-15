@@ -11,6 +11,21 @@ No token, no external service — just a public GitHub page and the standard lib
 [`contributions.py`](contributions.py) holds the shared parser; [`logger.py`](logger.py) and
 [`backfill.py`](backfill.py) both build on it.
 
+---
+
+## 🎯 For hiring managers (30-second read)
+
+**What this is**: a small, self-hosted automation — a daily GitHub Actions job that scrapes my own public contribution calendar and commits the result, so the activity heatmap on [my portfolio](https://yukisatodev.github.io/) shows real data instead of a placeholder.
+
+A few things this is meant to show:
+
+- **I don't ship fake data.** The heatmap used to carry an "illustrative only" disclaimer. Rather than leave it, I built the pipeline needed to back it with real numbers.
+- **Failure modes are considered, not just the happy path.** This scrapes an undocumented public HTML endpoint rather than an official API, so it *can* break silently. `logger.py` fails soft — it logs `0` and keeps the workflow green — instead of taking down the automation over a source it doesn't control.
+- **Scope is kept deliberately narrow.** Only public contributions are counted, on purpose — a portfolio-facing chart shouldn't leak activity on private client repos, even indirectly.
+- **No moving parts beyond what's needed.** No token, no third-party service, just the standard library and a scheduled Action — small enough to read end-to-end in a few minutes.
+
+---
+
 ## Why
 
 Built to replace the "illustrative, not connected to any live account" disclaimer under the
